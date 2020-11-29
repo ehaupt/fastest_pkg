@@ -8,19 +8,20 @@ Requires : curl
 License  : BSD3CLAUSE
 """
 
-from __future__ import print_function  # Imports print_function from python 3
-
 import shlex
 import subprocess
 import re
 import sys
+import argparse
 import dns.resolver
+
 
 def speedtest(url):
     """ Returns bytes per second value """
     cmd = 'curl -Lo /dev/null -skw "%%{speed_download}" %s' % (url)
-    proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(
+        shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     out, err = proc.communicate()
 
     if err:
@@ -31,14 +32,16 @@ def speedtest(url):
 
     return None
 
-class PkgMirror(object):
+
+class PkgMirror:
     """ class to handle pkg mirrors """
+
     def __init__(self, mirror):
         self.benchmark_files = (
-            'http://%%SERVER%%/%%ABI%%/latest/packagesite.txz',
-            'http://%%SERVER%%/%%ABI%%/latest/meta.txz',
-            'http://%%SERVER%%/%%ABI%%/latest/digests.txz',
-            'http://%%SERVER%%/%%ABI%%/latest/Latest/pkg.txz'
+            "http://%%SERVER%%/%%ABI%%/latest/packagesite.txz",
+            "http://%%SERVER%%/%%ABI%%/latest/meta.txz",
+            "http://%%SERVER%%/%%ABI%%/latest/digests.txz",
+            "http://%%SERVER%%/%%ABI%%/latest/Latest/pkg.txz",
         )
         self.mirror = mirror
         self.abi = self.get_abi()
@@ -46,15 +49,16 @@ class PkgMirror(object):
     @classmethod
     def get_abi(cls):
         """ get ABI string from pkg -vv """
-        cmd = '/usr/local/sbin/pkg-static -vv'
-        proc = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        cmd = "/usr/local/sbin/pkg-static -vv"
+        proc = subprocess.Popen(
+            shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         out, err = proc.communicate()
 
         if err:
             raise Exception("pkg-static returned an error")
 
-        match = re.search(r"\nABI\s+=\s+\"([^\"]*)\"", out)
+        match = re.search(r"\nABI\s+=\s+\"([^\"]*)\"", out.decode("utf-8"))
         if match:
             return match.group(1)
 
@@ -65,8 +69,8 @@ class PkgMirror(object):
         self.get_abi()
         urls = []
         for rfile in self.benchmark_files:
-            rfile = re.sub('%%SERVER%%', self.mirror, rfile)
-            rfile = re.sub('%%ABI%%', self.abi, rfile)
+            rfile = re.sub("%%SERVER%%", self.mirror, rfile)
+            rfile = re.sub("%%ABI%%", self.abi, rfile)
             urls.append(rfile)
 
         return urls
@@ -75,12 +79,31 @@ class PkgMirror(object):
 def get_mirrors():
     """ returns a list of all mirrors for pkg.freebsd.org """
     resolver = dns.resolver.Resolver()
-    pkg_mirrors = resolver.query("_http._tcp.pkg.freebsd.org", "SRV")
+    try:
+        pkg_mirrors = resolver.resolve("_http._tcp.pkg.freebsd.org", "SRV")
+    except AttributeError:
+        pkg_mirrors = resolver.query("_http._tcp.pkg.freebsd.org", "SRV")
+
     return pkg_mirrors
+
+
+def argument_parser():
+    """ Parsers CLI arguments and displays help text, handles all the Cli stuff """
+    parser = argparse.ArgumentParser(
+        description="Script for finding and configuring fastest FreeBSD pkg mirror"
+    )
+
+    parser.add_argument(
+        "-w", "--write", action="store_true", help="Write fastest pkg configuration"
+    )
+
+    argument = vars(parser.parse_args())
+    return argument
 
 
 def main():
     """ script starts here """
+    cli_arguments = argument_parser()
     stats = []
     mirrors = get_mirrors()
     for mirror in mirrors:
@@ -90,16 +113,23 @@ def main():
                 bytes_per_second = speedtest(url)
                 if bytes_per_second:
                     mirror_name = mirror.target.to_text(omit_final_dot=True)
-                    print("%s: %s KB/s" % (mirror_name, (bytes_per_second/1000)))
+                    print(("%s: %s KB/s" % (mirror_name, (bytes_per_second / 1000))))
                     stats.append((mirror_name, bytes_per_second))
                     break
 
     stats.sort(key=lambda x: float(x[1]), reverse=True)
-    print("\nFastest:\n%s: %s KB/s" % (stats[0][0], (stats[0][1]/1000)))
+    print(("\nFastest:\n%s: %s KB/s" % (stats[0][0], (stats[0][1] / 1000))))
+
+    pkg_cfg = 'FreeBSD: { url: "http://%s/${ABI}/latest" }' % stats[0][0]
+    print("\n")
+    print("Write configuration:")
+    print("mkdir -p /usr/local/etc/pkg/repos/")
+    print("echo '" + pkg_cfg + "' \\\n\t> /usr/local/etc/pkg/repos/FreeBSD.conf")
+    print("\n")
 
 
 # Main section of the script
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:  # Catch Ctrl-C
