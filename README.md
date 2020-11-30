@@ -18,7 +18,7 @@ $ dig +short _http._tcp.pkg.freebsd.org srv
 50 10 80 pkg0.tuk.freebsd.org.
 ```
 
-However, this method does not chose the fastest mirror. This script can help you to find the fastest pkg mirror near you.
+However, this method does not choose the fastest mirror. This script can help you to find the fastest pkg mirror near you.
 
 ```console
 $ ./fastest_pkg.py 
