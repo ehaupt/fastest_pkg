@@ -9,7 +9,7 @@ with open('requirements.txt') as f:
 
 setup(
     name = "fastest_pkg",
-    version = "0.1.1",
+    version = "0.1.2",
     author = "Emanuel Haupt",
     author_email = "ehaupt@FreeBSD.org",
     description = ("Script to find the fastest FreeBSD.org pkg mirror."),

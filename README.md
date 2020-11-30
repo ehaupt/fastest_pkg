@@ -1,6 +1,12 @@
 # fastest_pkg
 
-Script to find the fastest FreeBSD.org pkg mirror. By default this is determined by the output of
+## Synopsis
+
+Script to find the fastest FreeBSD.org pkg mirror near you.
+
+## Description
+
+By default FreeBSD pkg uses DNS-based load balancing. This is achieved a SRV query:
 
 ```console
 $ dig +short _http._tcp.pkg.freebsd.org srv
@@ -12,9 +18,7 @@ $ dig +short _http._tcp.pkg.freebsd.org srv
 50 10 80 pkg0.tuk.freebsd.org.
 ```
 
-However, the used pkg mirror is not always the fastest.
-
-# Sample
+However, this method does not chose the fastest mirror. This script can help you to find the fastest pkg mirror near you.
 
 ```console
 $ ./fastest_pkg.py 
@@ -33,5 +37,6 @@ mkdir -p /usr/local/etc/pkg/repos/
 echo 'FreeBSD: { url: "http://pkg0.pkt.freebsd.org/${ABI}/latest" }' \
         > /usr/local/etc/pkg/repos/FreeBSD.conf
 
-
 ```
+
+At the end of the output you'll see a sample configuration to hardcode the fastest pkg mirror leading to much higher pkg performance.
