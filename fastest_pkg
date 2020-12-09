@@ -13,6 +13,8 @@ import subprocess
 import re
 import sys
 import argparse
+import json
+from operator import itemgetter
 import dns.resolver
 
 
@@ -93,6 +95,13 @@ def argument_parser():
         description="Script for finding and configuring fastest FreeBSD pkg mirror"
     )
 
+    parser.add_argument(
+        "-j",
+        "--json",
+        action="store_true",
+        help="only show basic information in JSON format",
+    )
+
     argument = vars(parser.parse_args())
     return argument
 
@@ -109,19 +118,35 @@ def main():
                 bytes_per_second = speedtest(url)
                 if bytes_per_second:
                     mirror_name = mirror.target.to_text(omit_final_dot=True)
-                    print(("%s: %s KB/s" % (mirror_name, (bytes_per_second / 1000))))
-                    stats.append((mirror_name, bytes_per_second))
+                    if not cli_arguments["json"]:
+                        print(
+                            ("%s: %s KB/s" % (mirror_name, (bytes_per_second / 1000)))
+                        )
+                    stats.append(
+                        {
+                            "mirror_name": mirror_name,
+                            "bytes_per_second": bytes_per_second,
+                        }
+                    )
                     break
 
-    stats.sort(key=lambda x: float(x[1]), reverse=True)
-    print(("\nFastest:\n%s: %s KB/s" % (stats[0][0], (stats[0][1] / 1000))))
+    stats_sorted = sorted(stats, key=itemgetter("bytes_per_second"), reverse=True)
 
-    pkg_cfg = 'FreeBSD: { url: "http://%s/${ABI}/latest" }' % stats[0][0]
-    print("\n")
-    print("Write configuration:")
-    print("mkdir -p /usr/local/etc/pkg/repos/")
-    print("echo '" + pkg_cfg + "' \\\n\t> /usr/local/etc/pkg/repos/FreeBSD.conf")
-    print("\n")
+    if cli_arguments["json"]:
+        print(json.dumps(stats_sorted))
+    else:
+        pkg_cfg = (
+            'FreeBSD: { url: "http://%s/${ABI}/latest" }'
+            % stats_sorted[0]["mirror_name"]
+        )
+        print(
+            f"\nFastest:\n{stats_sorted[0]['mirror_name']}: {stats_sorted[0]['bytes_per_second']/1000} KB/s"
+        )
+        print("\n")
+        print("Write configuration:")
+        print("mkdir -p /usr/local/etc/pkg/repos/")
+        print("echo '" + pkg_cfg + "' \\\n\t> /usr/local/etc/pkg/repos/FreeBSD.conf")
+        print("\n")
 
 
 # Main section of the script
