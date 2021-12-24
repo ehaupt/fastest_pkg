@@ -1,1 +1,61 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.tar
+#Ignore vi/vim swap files
+*.swp
+*.swo
+
+# Distribution / packaging
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+# MyPY
+.mypy_cache/*
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+
+# dotenv
+.env
+
+# virtualenv
 .venv
+venv/
+ENV/
+
+# Rope project settings
+.ropeproject
+
+# Exclude external repositories
+.secret
+.vscode/
+test/
+.env
+
+# VS Code workspace config
+*.code-workspace
+
+#coverage
+.coverage
