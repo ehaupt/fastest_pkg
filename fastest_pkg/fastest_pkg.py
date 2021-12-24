@@ -48,7 +48,7 @@ def speedtest(url: str, args: Dict):
             curl.setopt(curl.NOPROGRESS, True)
 
         curl.setopt(pycurl.CONNECTTIMEOUT, int(args["timeout"] / 1000))
-        curl.setopt(pycurl.TIMEOUT, args["timeout"])
+        curl.setopt(pycurl.TIMEOUT_MS, args["timeout"])
 
         try:
             curl.perform()
