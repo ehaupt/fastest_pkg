@@ -18,24 +18,30 @@ $ dig +short _http._tcp.pkg.freebsd.org srv
 50 10 80 pkg0.tuk.freebsd.org.
 ```
 
-However, this method does not choose the fastest mirror. This script can help you to find the fastest pkg mirror near you. At the end of the output you'll see a sample configuration to hardcode the fastest pkg mirror leading to much higher pkg performance.
+However, this method will try to choose the nearest mirror, which will not necessarily be the fastest. This script can help you to find the fastest pkg mirror by trying each one in succession. At the end of the output you'll see a sample configuration to hardcode the fastest pkg mirror leading to much higher pkg performance.
 
 
 ```console
 $ ./fastest_pkg.py 
-pkg0.bme.freebsd.org: 16.1 MB/s
+pkg0.tuk.freebsd.org: 2.4 MB/s
+pkg0.twn.freebsd.org: 16.8 MB/s
+pkg0.bbt.freebsd.org: 7.7 MB/s
+pkg0.bme.freebsd.org: 1.6 MB/s
+pkg0.bra.freebsd.org: 68.2 kB/s
 pkg0.isc.freebsd.org: 0.0 B/s
-pkg0.nyi.freebsd.org: 4.7 MB/s
-pkg0.pkt.freebsd.org: 11.9 MB/s
-pkg0.tuk.freebsd.org: 2.2 MB/s
+pkg0.jinx.freebsd.org: 65.6 kB/s
+pkg0.kul.freebsd.org: 7.8 MB/s
+pkg0.kwc.freebsd.org: 8.7 MB/s
+pkg0.pkt.freebsd.org: 1.7 MB/s
+pkg0.nyi.freebsd.org: 1.6 MB/s
 
 Fastest:
-pkg0.bme.freebsd.org: 16.1 MB/s
+pkg0.twn.freebsd.org: 16.8 MB/s
 
 
 Write configuration:
 mkdir -p /usr/local/etc/pkg/repos/
-echo 'FreeBSD: { url: "http://pkg0.bme.freebsd.org/${ABI}/latest" }' \
+echo 'FreeBSD: { url: "http://pkg0.twn.freebsd.org/${ABI}/quarterly" }' \
         > /usr/local/etc/pkg/repos/FreeBSD.conf
 
 ```
