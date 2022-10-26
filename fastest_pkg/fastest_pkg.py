@@ -84,9 +84,9 @@ def get_mirrors():
     """returns a list of all mirrors for pkg.freebsd.org"""
     resolver = dns.resolver.Resolver()
     try:
-        pkg_mirrors = resolver.resolve("_http._tcp.pkg.freebsd.org", "SRV")
+        pkg_mirrors = resolver.resolve("_http._tcp.pkg.all.freebsd.org", "SRV")
     except AttributeError:
-        pkg_mirrors = resolver.query("_http._tcp.pkg.freebsd.org", "SRV")
+        pkg_mirrors = resolver.query("_http._tcp.pkg.all.freebsd.org", "SRV")
 
     return pkg_mirrors
 
