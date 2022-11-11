@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 
+## [v0.2.1]
+
+### Changed
+
+* Switch from GeoDNS to `_http._tcp.pkg.all` which also returns the local mirrors
+* Update documentation
+
 ## [v0.2.0] - 2021-12-24
 
 ### Added
