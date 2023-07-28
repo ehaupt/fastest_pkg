@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 
+## [v0.2.2] - 2023-07-28
+
+### Changed
+
+* Update example line to show `mirror_type`
+
 ## [v0.2.1]
 
 ### Changed
