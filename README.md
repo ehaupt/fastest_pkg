@@ -6,7 +6,7 @@ Script to find the fastest FreeBSD.org pkg mirror near you.
 
 ## Description
 
-By default FreeBSD pkg uses DNS-based load balancing. This is achieved a SRV query:
+By default FreeBSD pkg uses DNS-based load balancing. This is achieved through an SRV query:
 
 ```console
 $ dig +short _http._tcp.pkg.all.freebsd.org srv
