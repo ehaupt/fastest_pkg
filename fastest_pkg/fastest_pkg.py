@@ -146,7 +146,7 @@ def main():
         print(json.dumps(stats_sorted))
     else:
         pkg = PkgMirror(stats_sorted[0]["mirror_name"])
-        pkg_cfg = 'FreeBSD: { url: "http://%s/${ABI}/%s", mirror_type: "NONE" }' % (
+        pkg_cfg = 'FreeBSD: { url: "https://%s/${ABI}/%s", mirror_type: "NONE" }' % (
             stats_sorted[0]["mirror_name"],
             pkg.release,
         )
