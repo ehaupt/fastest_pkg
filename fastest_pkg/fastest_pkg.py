@@ -80,13 +80,18 @@ def speedtest(url: str, args: Dict):
     return speed_download
 
 
-def get_mirrors():
+def get_mirrors(cli_arguments):
     """returns a list of all mirrors for pkg.freebsd.org"""
     resolver = dns.resolver.Resolver()
+    if cli_arguments["disable_ssl"]:
+        query = "_http._tcp.pkg.all.freebsd.org"
+    else:
+        query = "_https._tcp.pkg.all.freebsd.org"
+
     try:
-        pkg_mirrors = resolver.resolve("_http._tcp.pkg.all.freebsd.org", "SRV")
+        pkg_mirrors = resolver.resolve(query, "SRV")
     except AttributeError:
-        pkg_mirrors = resolver.query("_http._tcp.pkg.all.freebsd.org", "SRV")
+        pkg_mirrors = resolver.query(query, "SRV")
 
     return pkg_mirrors
 
@@ -119,6 +124,12 @@ def argument_parser():
         help="timeout in ms",
     )
 
+    parser.add_argument(
+        "--disable-ssl",
+        action="store_true",
+        help="use HTTP instead of HTTPS",
+    )
+
     argument = vars(parser.parse_args())
     return argument
 
@@ -127,7 +138,7 @@ def main():
     """script starts here"""
     cli_arguments = argument_parser()
     stats = []
-    mirrors = get_mirrors()
+    mirrors = get_mirrors(cli_arguments=cli_arguments)
     for mirror in mirrors:
         if mirror.priority > 10:
             pkg = PkgMirror(mirror.target.to_text(omit_final_dot=True))
@@ -146,7 +157,13 @@ def main():
         print(json.dumps(stats_sorted))
     else:
         pkg = PkgMirror(stats_sorted[0]["mirror_name"])
-        pkg_cfg = 'FreeBSD: { url: "http://%s/${ABI}/%s", mirror_type: "NONE" }' % (
+        if cli_arguments["disable_ssl"]:
+            protocol = "http"
+        else:
+            protocol = "https"
+
+        pkg_cfg = 'FreeBSD: { url: "%s://%s/${ABI}/%s", mirror_type: "NONE" }' % (
+            protocol,
             stats_sorted[0]["mirror_name"],
             pkg.release,
         )

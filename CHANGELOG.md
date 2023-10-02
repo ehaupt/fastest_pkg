@@ -11,11 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 ### Removed
 
-## [v0.2.2] - 2023-07-28
+## [v0.2.2] - 2023-10-02
 
 ### Changed
 
 * Update example line to show `mirror_type`
+* Switched from HTTP to HTTPS by default
+
+### Added
+
+* Added an option to to disable ssl `--disable-ssl`
 
 ## [v0.2.1]
 
