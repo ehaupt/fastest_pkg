@@ -55,7 +55,7 @@ The following cli options are available:
 
 ```console
 $ fastest_pkg --help
-usage: fastest_pkg [-h] [-j] [-v] [-t TIMEOUT]
+usage: fastest_pkg [-h] [-j] [-v] [-t TIMEOUT] [--disable-ssl]
 
 Script for finding and configuring fastest FreeBSD pkg mirror
 
@@ -65,4 +65,5 @@ optional arguments:
   -v, --verbose         be more verbose
   -t TIMEOUT, --timeout TIMEOUT
                         timeout in ms
+  --disable-ssl         use HTTP instead of HTTPS
 ```
