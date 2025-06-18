@@ -8,10 +8,9 @@ class PkgMirror:
 
     def __init__(self, mirror):
         self.benchmark_files = (
-            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/packagesite.txz",
-            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/meta.txz",
-            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/digests.txz",
-            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/Latest/pkg.txz",
+            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/data.pkg",
+            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/packagesite.pkg",
+            "http://%%SERVER%%/%%ABI%%/%%RELEASE%%/Latest/pkg.pkg",
         )
         self.mirror = mirror
         self.abi, self.release = self.get_info()
